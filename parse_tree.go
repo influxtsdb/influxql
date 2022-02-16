@@ -145,6 +145,9 @@ func init() {
 		show.Handle(SERIES, func(p *Parser) (Statement, error) {
 			return p.parseShowSeriesStatement()
 		})
+		show.Handle(SERVERS, func(p *Parser) (Statement, error) {
+			return p.parseShowServersStatement()
+		})
 		show.Group(SHARD).Handle(GROUPS, func(p *Parser) (Statement, error) {
 			return p.parseShowShardGroupsStatement()
 		})
@@ -193,11 +196,17 @@ func init() {
 		drop.Group(CONTINUOUS).Handle(QUERY, func(p *Parser) (Statement, error) {
 			return p.parseDropContinuousQueryStatement()
 		})
+		drop.Handle(DATA, func(p *Parser) (Statement, error) {
+			return p.parseDropServerStatement(false)
+		})
 		drop.Handle(DATABASE, func(p *Parser) (Statement, error) {
 			return p.parseDropDatabaseStatement()
 		})
 		drop.Handle(MEASUREMENT, func(p *Parser) (Statement, error) {
 			return p.parseDropMeasurementStatement()
+		})
+		drop.Handle(META, func(p *Parser) (Statement, error) {
+			return p.parseDropServerStatement(true)
 		})
 		drop.Group(RETENTION).Handle(POLICY, func(p *Parser) (Statement, error) {
 			return p.parseDropRetentionPolicyStatement()

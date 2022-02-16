@@ -221,6 +221,7 @@ func (*DropDatabaseStatement) node()               {}
 func (*DropMeasurementStatement) node()            {}
 func (*DropRetentionPolicyStatement) node()        {}
 func (*DropSeriesStatement) node()                 {}
+func (*DropServerStatement) node()                 {}
 func (*DropShardStatement) node()                  {}
 func (*DropSubscriptionStatement) node()           {}
 func (*DropUserStatement) node()                   {}
@@ -243,6 +244,7 @@ func (*ShowMeasurementsStatement) node()           {}
 func (*ShowQueriesStatement) node()                {}
 func (*ShowSeriesStatement) node()                 {}
 func (*ShowSeriesCardinalityStatement) node()      {}
+func (*ShowServersStatement) node()                {}
 func (*ShowShardGroupsStatement) node()            {}
 func (*ShowShardsStatement) node()                 {}
 func (*ShowStatsStatement) node()                  {}
@@ -349,6 +351,7 @@ func (*DropDatabaseStatement) stmt()               {}
 func (*DropMeasurementStatement) stmt()            {}
 func (*DropRetentionPolicyStatement) stmt()        {}
 func (*DropSeriesStatement) stmt()                 {}
+func (*DropServerStatement) stmt()                 {}
 func (*DropSubscriptionStatement) stmt()           {}
 func (*DropUserStatement) stmt()                   {}
 func (*ExplainStatement) stmt()                    {}
@@ -366,6 +369,7 @@ func (*ShowQueriesStatement) stmt()                {}
 func (*ShowRetentionPoliciesStatement) stmt()      {}
 func (*ShowSeriesStatement) stmt()                 {}
 func (*ShowSeriesCardinalityStatement) stmt()      {}
+func (*ShowServersStatement) stmt()                {}
 func (*ShowShardGroupsStatement) stmt()            {}
 func (*ShowShardsStatement) stmt()                 {}
 func (*ShowStatsStatement) stmt()                  {}
@@ -2211,6 +2215,17 @@ func (s *ShowSeriesStatement) DefaultDatabase() string {
 	return s.Database
 }
 
+// ShowServersStatement represents a command for listing all servers.
+type ShowServersStatement struct{}
+
+// String returns a string representation of the show servers command.
+func (s *ShowServersStatement) String() string { return "SHOW SERVERS" }
+
+// RequiredPrivileges returns the privilege required to execute a ShowServersStatement
+func (s *ShowServersStatement) RequiredPrivileges() (ExecutionPrivileges, error) {
+	return ExecutionPrivileges{{Admin: false, Name: "", Privilege: ReadPrivilege}}, nil
+}
+
 // DropSeriesStatement represents a command for removing a series from the database.
 type DropSeriesStatement struct {
 	// Data source that fields are extracted from (optional)
@@ -2240,6 +2255,33 @@ func (s *DropSeriesStatement) String() string {
 // RequiredPrivileges returns the privilege required to execute a DropSeriesStatement.
 func (s DropSeriesStatement) RequiredPrivileges() (ExecutionPrivileges, error) {
 	return ExecutionPrivileges{{Admin: false, Name: "", Privilege: WritePrivilege}}, nil
+}
+
+// DropServerStatement represents a command for removing a server from the cluster.
+type DropServerStatement struct {
+	// ID of the node to be dropped.
+	NodeID uint64
+
+	// Meta indicates if the server being dropped is a meta or data node
+	Meta bool
+}
+
+// String returns a string representation of the drop series statement.
+func (s *DropServerStatement) String() string {
+	var buf strings.Builder
+	_, _ = buf.WriteString("DROP ")
+	if s.Meta {
+		_, _ = buf.WriteString(" META SERVER ")
+	} else {
+		_, _ = buf.WriteString(" DATA SERVER ")
+	}
+	_, _ = buf.WriteString(strconv.FormatUint(s.NodeID, 10))
+	return buf.String()
+}
+
+// RequiredPrivileges returns the privilege required to execute a DropServerStatement.
+func (s DropServerStatement) RequiredPrivileges() (ExecutionPrivileges, error) {
+	return ExecutionPrivileges{{Admin: true, Name: "", Privilege: AllPrivileges}}, nil
 }
 
 // DeleteSeriesStatement represents a command for deleting all or part of a series from a database.
@@ -3429,6 +3471,26 @@ type Measurement struct {
 	// This field indicates that the measurement should read be read from the
 	// specified system iterator.
 	SystemIterator string
+}
+
+// MarshalBinary encodes a list of sources to a binary format.
+func (m *Measurement) MarshalBinary() ([]byte, error) {
+	pb := encodeMeasurement(m)
+	return proto.Marshal(pb)
+}
+
+// UnmarshalBinary decodes binary data into a list of sources.
+func (m *Measurement) UnmarshalBinary(buf []byte) error {
+	var pb internal.Measurement
+	if err := proto.Unmarshal(buf, &pb); err != nil {
+		return err
+	}
+	mm, err := decodeMeasurement(&pb)
+	if err != nil {
+		return err
+	}
+	*m = *mm
+	return nil
 }
 
 // Clone returns a deep clone of the Measurement.

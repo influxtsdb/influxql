@@ -1644,10 +1644,34 @@ func (p *Parser) parseDropShardStatement() (*DropShardStatement, error) {
 	return stmt, nil
 }
 
+// parseDropServerStatement parses a string and returns a DropServerStatement.
+// This function assumes the "DROP <META|DATA>" tokens have already been consumed.
+func (p *Parser) parseDropServerStatement(meta bool) (*DropServerStatement, error) {
+	// Parse the SERVER token
+	if tok, pos, lit := p.ScanIgnoreWhitespace(); tok != SERVER {
+		return nil, newParseError(tokstr(tok, lit), []string{"SERVER"}, pos)
+	}
+
+	var err error
+	stmt := &DropServerStatement{Meta: meta}
+
+	// Parse the server's ID.
+	if stmt.NodeID, err = p.ParseUInt64(); err != nil {
+		return nil, err
+	}
+	return stmt, nil
+}
+
 // parseShowContinuousQueriesStatement parses a string and returns a ShowContinuousQueriesStatement.
 // This function assumes the "SHOW CONTINUOUS" tokens have already been consumed.
 func (p *Parser) parseShowContinuousQueriesStatement() (*ShowContinuousQueriesStatement, error) {
 	return &ShowContinuousQueriesStatement{}, nil
+}
+
+// parseShowServersStatement parses a string and returns a ShowServersStatement.
+// This function assumes the "SHOW SERVERS" tokens have already been consumed.
+func (p *Parser) parseShowServersStatement() (*ShowServersStatement, error) {
+	return &ShowServersStatement{}, nil
 }
 
 // parseGrantsForUserStatement parses a string and returns a ShowGrantsForUserStatement.
