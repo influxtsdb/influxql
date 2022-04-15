@@ -76,10 +76,8 @@ const (
 	CARDINALITY
 	CREATE
 	CONTINUOUS
-	DATA
 	DATABASE
 	DATABASES
-	SERVER
 	SERVERS
 	DEFAULT
 	DELETE
@@ -110,7 +108,6 @@ const (
 	LIMIT
 	MEASUREMENT
 	MEASUREMENTS
-	META
 	NAME
 	OFFSET
 	ON
@@ -203,10 +200,8 @@ var tokens = [...]string{
 	CARDINALITY:   "CARDINALITY",
 	CREATE:        "CREATE",
 	CONTINUOUS:    "CONTINUOUS",
-	DATA:          "DATA",
 	DATABASE:      "DATABASE",
 	DATABASES:     "DATABASES",
-	SERVER:        "SERVER",
 	SERVERS:       "SERVERS",
 	DEFAULT:       "DEFAULT",
 	DELETE:        "DELETE",
@@ -237,7 +232,6 @@ var tokens = [...]string{
 	LIMIT:         "LIMIT",
 	MEASUREMENT:   "MEASUREMENT",
 	MEASUREMENTS:  "MEASUREMENTS",
-	META:          "META",
 	NAME:          "NAME",
 	OFFSET:        "OFFSET",
 	ON:            "ON",

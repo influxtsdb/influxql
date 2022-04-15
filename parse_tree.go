@@ -196,17 +196,11 @@ func init() {
 		drop.Group(CONTINUOUS).Handle(QUERY, func(p *Parser) (Statement, error) {
 			return p.parseDropContinuousQueryStatement()
 		})
-		drop.Handle(DATA, func(p *Parser) (Statement, error) {
-			return p.parseDropServerStatement(false)
-		})
 		drop.Handle(DATABASE, func(p *Parser) (Statement, error) {
 			return p.parseDropDatabaseStatement()
 		})
 		drop.Handle(MEASUREMENT, func(p *Parser) (Statement, error) {
 			return p.parseDropMeasurementStatement()
-		})
-		drop.Handle(META, func(p *Parser) (Statement, error) {
-			return p.parseDropServerStatement(true)
 		})
 		drop.Group(RETENTION).Handle(POLICY, func(p *Parser) (Statement, error) {
 			return p.parseDropRetentionPolicyStatement()

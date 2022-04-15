@@ -221,7 +221,6 @@ func (*DropDatabaseStatement) node()               {}
 func (*DropMeasurementStatement) node()            {}
 func (*DropRetentionPolicyStatement) node()        {}
 func (*DropSeriesStatement) node()                 {}
-func (*DropServerStatement) node()                 {}
 func (*DropShardStatement) node()                  {}
 func (*DropSubscriptionStatement) node()           {}
 func (*DropUserStatement) node()                   {}
@@ -351,7 +350,6 @@ func (*DropDatabaseStatement) stmt()               {}
 func (*DropMeasurementStatement) stmt()            {}
 func (*DropRetentionPolicyStatement) stmt()        {}
 func (*DropSeriesStatement) stmt()                 {}
-func (*DropServerStatement) stmt()                 {}
 func (*DropSubscriptionStatement) stmt()           {}
 func (*DropUserStatement) stmt()                   {}
 func (*ExplainStatement) stmt()                    {}
@@ -2255,33 +2253,6 @@ func (s *DropSeriesStatement) String() string {
 // RequiredPrivileges returns the privilege required to execute a DropSeriesStatement.
 func (s DropSeriesStatement) RequiredPrivileges() (ExecutionPrivileges, error) {
 	return ExecutionPrivileges{{Admin: false, Name: "", Privilege: WritePrivilege}}, nil
-}
-
-// DropServerStatement represents a command for removing a server from the cluster.
-type DropServerStatement struct {
-	// ID of the node to be dropped.
-	NodeID uint64
-
-	// Meta indicates if the server being dropped is a meta or data node
-	Meta bool
-}
-
-// String returns a string representation of the drop series statement.
-func (s *DropServerStatement) String() string {
-	var buf strings.Builder
-	_, _ = buf.WriteString("DROP ")
-	if s.Meta {
-		_, _ = buf.WriteString(" META SERVER ")
-	} else {
-		_, _ = buf.WriteString(" DATA SERVER ")
-	}
-	_, _ = buf.WriteString(strconv.FormatUint(s.NodeID, 10))
-	return buf.String()
-}
-
-// RequiredPrivileges returns the privilege required to execute a DropServerStatement.
-func (s DropServerStatement) RequiredPrivileges() (ExecutionPrivileges, error) {
-	return ExecutionPrivileges{{Admin: true, Name: "", Privilege: AllPrivileges}}, nil
 }
 
 // DeleteSeriesStatement represents a command for deleting all or part of a series from a database.

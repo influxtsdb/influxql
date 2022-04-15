@@ -2883,16 +2883,6 @@ func TestParser_ParseStatement(t *testing.T) {
 			},
 		},
 
-		// DROP SERVER statement
-		{
-			s:    `DROP META SERVER 123`,
-			stmt: &influxql.DropServerStatement{NodeID: 123, Meta: true},
-		},
-		{
-			s:    `DROP DATA SERVER 123`,
-			stmt: &influxql.DropServerStatement{NodeID: 123, Meta: false},
-		},
-
 		// SHOW CONTINUOUS QUERIES statement
 		{
 			s:    `SHOW CONTINUOUS QUERIES`,
@@ -3542,8 +3532,6 @@ func TestParser_ParseStatement(t *testing.T) {
 		{s: `DROP SERIES FROM src WHERE`, err: `found EOF, expected identifier, string, number, bool at line 1, char 28`},
 		{s: `DROP SERIES FROM "foo".myseries`, err: `retention policy not supported at line 1, char 1`},
 		{s: `DROP SERIES FROM foo..myseries`, err: `database not supported at line 1, char 1`},
-		{s: `DROP META SERVER`, err: `found EOF, expected integer at line 1, char 18`},
-		{s: `DROP DATA SERVER abc`, err: `found abc, expected integer at line 1, char 18`},
 		{s: `SHOW CONTINUOUS`, err: `found EOF, expected QUERIES at line 1, char 17`},
 		{s: `SHOW RETENTION`, err: `found EOF, expected POLICIES at line 1, char 16`},
 		{s: `SHOW RETENTION ON`, err: `found ON, expected POLICIES at line 1, char 16`},
@@ -3562,7 +3550,7 @@ func TestParser_ParseStatement(t *testing.T) {
 		{s: `CREATE CONTINUOUS QUERY`, err: `found EOF, expected identifier at line 1, char 25`},
 		{s: `CREATE CONTINUOUS QUERY cq ON db RESAMPLE FOR 5s BEGIN SELECT mean(value) INTO cpu_mean FROM cpu GROUP BY time(10s) END`, err: `FOR duration must be >= GROUP BY time duration: must be a minimum of 10s, got 5s`},
 		{s: `CREATE CONTINUOUS QUERY cq ON db RESAMPLE EVERY 10s FOR 5s BEGIN SELECT mean(value) INTO cpu_mean FROM cpu GROUP BY time(5s) END`, err: `FOR duration must be >= GROUP BY time duration: must be a minimum of 10s, got 5s`},
-		{s: `DROP FOO`, err: `found FOO, expected CONTINUOUS, DATA, DATABASE, MEASUREMENT, META, RETENTION, SERIES, SHARD, SUBSCRIPTION, USER at line 1, char 6`},
+		{s: `DROP FOO`, err: `found FOO, expected CONTINUOUS, DATABASE, MEASUREMENT, RETENTION, SERIES, SHARD, SUBSCRIPTION, USER at line 1, char 6`},
 		{s: `CREATE FOO`, err: `found FOO, expected CONTINUOUS, DATABASE, USER, RETENTION, SUBSCRIPTION at line 1, char 8`},
 		{s: `CREATE DATABASE`, err: `found EOF, expected identifier at line 1, char 17`},
 		{s: `CREATE DATABASE "testdb" WITH`, err: `found EOF, expected DURATION, NAME, REPLICATION, SHARD at line 1, char 31`},
