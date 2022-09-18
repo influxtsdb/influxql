@@ -1967,6 +1967,7 @@ func encodeMeasurement(mm *Measurement) *internal.Measurement {
 		RetentionPolicy: proto.String(mm.RetentionPolicy),
 		Name:            proto.String(mm.Name),
 		IsTarget:        proto.Bool(mm.IsTarget),
+		SystemIterator:  proto.String(mm.SystemIterator),
 	}
 	if mm.Regex != nil {
 		pb.Regex = proto.String(mm.Regex.Val.String())
@@ -1980,6 +1981,7 @@ func decodeMeasurement(pb *internal.Measurement) (*Measurement, error) {
 		RetentionPolicy: pb.GetRetentionPolicy(),
 		Name:            pb.GetName(),
 		IsTarget:        pb.GetIsTarget(),
+		SystemIterator:  pb.GetSystemIterator(),
 	}
 
 	if pb.Regex != nil {
