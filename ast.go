@@ -2593,7 +2593,7 @@ type ShowMeasurementsStatement struct {
 	// Retention policy to query. If blank, use all retention policies (do not use default)
 	RetentionPolicy string
 
-	WildcardDatabase bool
+	WildcardDatabase        bool
 	WildcardRetentionPolicy bool
 
 	// Measurement name or regex.
