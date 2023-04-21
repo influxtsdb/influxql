@@ -2097,6 +2097,7 @@ type ExplainStatement struct {
 	Statement *SelectStatement
 
 	Analyze bool
+	Verbose bool
 }
 
 // String returns a string representation of the explain statement.
@@ -2105,6 +2106,9 @@ func (e *ExplainStatement) String() string {
 	buf.WriteString("EXPLAIN ")
 	if e.Analyze {
 		buf.WriteString("ANALYZE ")
+	}
+	if e.Verbose {
+		buf.WriteString("VERBOSE ")
 	}
 	buf.WriteString(e.Statement.String())
 	return buf.String()
